@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken"
 // const generateAccessToken = require("../controllers/login");
 
 function Auth(req, res, next) {
@@ -25,7 +25,8 @@ function Auth(req, res, next) {
           return res.status(403).json({ error: err.message });
         });
     } else {
-      req.userid = decoded.userid; // seting userid in req
+      // seting userid in req
+      req.userid = decoded.userid; 
       next();
     }
 
@@ -33,7 +34,7 @@ function Auth(req, res, next) {
   });
 }
 
-module.exports = Auth;
+export default Auth
 
 //*
 function refreshToken(refreshtoken,req, res) {

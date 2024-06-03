@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 const login = (req, res) => {
   const id = authUser(req.body);
@@ -16,7 +16,8 @@ const login = (req, res) => {
   res.json({ token: token, refreshtoken: refreshtoken });
 };
 
-module.exports = login;
+export default login;
+
 
 function generateAccessToken(userid) {
   return jwt.sign(userid, process.env.TOKEN_SECRET, { expiresIn: "10s" });
