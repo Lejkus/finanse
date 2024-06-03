@@ -1,7 +1,8 @@
-import jwt from "jsonwebtoken";
+import {generateAccessToken,generateRefreshToken} from "../functions/generateToken.js";
+import loginUser from "../functions/loginUser.js"
 
 const login = (req, res) => {
-  const id = authUser(req.body);
+  const id = loginUser(req.body);
   const token = generateAccessToken({ userid: id });
 
   //*
@@ -18,23 +19,3 @@ const login = (req, res) => {
 
 export default login;
 
-
-function generateAccessToken(userid) {
-  return jwt.sign(userid, process.env.TOKEN_SECRET, { expiresIn: "10s" });
-}
-
-//*
-//exports.generateAccessToken = generateAccessToken
-
-//*
-function generateRefreshToken(userid) {
-  return jwt.sign(userid, process.env.TOKEN_SECRET, { expiresIn: "70s" });
-}
-
-function authUser(userdata) {
-  //checking user in db
-  //console.log(userdata)
-
-  return "2hf972bbwq";
-  //return userid
-}
