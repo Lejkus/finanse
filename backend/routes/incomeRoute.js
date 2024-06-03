@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const Auth = require("../middlewares/Auth")
 
-router.get("/",Auth,(req, res) => {
+
+router.get("/",(req, res) => {
+  console.log(req.userid);
   res.send("5000zł");
 });
 

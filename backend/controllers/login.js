@@ -1,25 +1,39 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-const login = (req,res) =>{
+const login = (req, res) => {
+  const id = authUser(req.body);
+  const token = generateAccessToken({ userid: id });
 
-    const id = authUser(req.body)
-    const token = generateAccessToken({ userid: id });
+  //*
+  const refreshtoken = generateRefreshToken({ userid: id });
 
-    res.json(token);
+  //saving token in browser cookies
+  res.cookie("token", token);
 
-}
+  //*
+  res.cookie("refreshtoken", refreshtoken);
 
-module.exports = login
+  res.json({ token: token, refreshtoken: refreshtoken });
+};
+
+module.exports = login;
 
 function generateAccessToken(userid) {
-    return jwt.sign(userid, process.env.TOKEN_SECRET, { expiresIn: '60s' });
-  }
+  return jwt.sign(userid, process.env.TOKEN_SECRET, { expiresIn: "10s" });
+}
+
+//*
+//exports.generateAccessToken = generateAccessToken
+
+//*
+function generateRefreshToken(userid) {
+  return jwt.sign(userid, process.env.TOKEN_SECRET, { expiresIn: "70s" });
+}
 
 function authUser(userdata) {
+  //checking user in db
+  //console.log(userdata)
 
-    //checking user in db
-    //console.log(userdata)
-
-    return "2hf972bbwq"
-    //return userid
+  return "2hf972bbwq";
+  //return userid
 }
