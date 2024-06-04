@@ -9,10 +9,10 @@ const login = (req, res) => {
   const refreshtoken = generateRefreshToken({ userid: id });
 
   //saving token in browser cookies
-  res.cookie("token", token);
+  res.cookie("token", token,{httpOnly: true});
 
   //*
-  res.cookie("refreshtoken", refreshtoken);
+  res.cookie("refreshtoken", refreshtoken,{httpOnly: true});
 
   res.json({ token: token, refreshtoken: refreshtoken });
 };

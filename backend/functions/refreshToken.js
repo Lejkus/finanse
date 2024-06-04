@@ -6,6 +6,7 @@ export default function refreshToken(refreshtoken,req, res) {
       
       if (refreshtoken == null) return reject(new Error('No refresh token'));
   
+      //checking refreshtoken is active
       jwt.verify(refreshtoken, process.env.TOKEN_SECRET, (err, decoded) => {
         if (err) return reject(err);
   
@@ -18,7 +19,7 @@ export default function refreshToken(refreshtoken,req, res) {
         const newtoken = generateAccessToken({ userid: id })
         
         console.log('newtoken: ', newtoken);
-        res.cookie('token', newtoken);
+        res.cookie('token', newtoken, {httpOnly: true});
         resolve();
       });
     });

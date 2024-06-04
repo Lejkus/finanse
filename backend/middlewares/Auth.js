@@ -3,7 +3,7 @@ import refreshToken from "../functions/refreshToken.js";
 
 function Auth(req, res, next) {
   console.log();
-  console.log('authorization');
+  //console.log('authorization');
   
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -13,7 +13,10 @@ function Auth(req, res, next) {
   }
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+    //console.log(err);
     if (err) {
+      // console.log(err.toString().substr(0, 12) == "TokenExpired")
+      if(token !== req.cookies.token || err.toString().substr(0, 12) !== "TokenExpired") return res.status(403).json({ error: "error" });
       refreshToken(req.cookies.refreshtoken,req, res)
         //token refreshed succesfully
         .then(() => {
