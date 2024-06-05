@@ -1,0 +1,9 @@
+dodać rekordy do bazy v/
+
+zrobić tak aby co 2h uuwał tokeny co są w bazie dłużej niż 30min za pomocą daty v/
+
+napisać ładniej Auth refreshToken, bardziej try catch mniej obietnic itp 
+
+sprawdzać warunek a auth czy jest token w db
+
+logowanie

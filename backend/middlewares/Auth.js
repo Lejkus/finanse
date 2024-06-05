@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import refreshToken from "../functions/refreshToken.js";
 
+
 function Auth(req, res, next) {
   console.log();
   //console.log('authorization');
@@ -15,9 +16,11 @@ function Auth(req, res, next) {
   jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
     //console.log(err);
     if (err) {
-      // console.log(err.toString().substr(0, 12) == "TokenExpired")
+      //check token
+      //****** check is he in db if yes error :)
       if(token !== req.cookies.token || err.toString().substr(0, 12) !== "TokenExpired") return res.status(403).json({ error: "error" });
-      refreshToken(req.cookies.refreshtoken,req, res)
+
+      refreshToken(req.cookies.refreshtoken,token,req, res)
         //token refreshed succesfully
         .then(() => {
           next();

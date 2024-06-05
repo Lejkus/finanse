@@ -8,42 +8,48 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String
-  password String
-  incomes Income[]
-  spending Spending[]
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  name       String
+  password   String
+  incomes    Income[]
+  spending   Spending[]
   investment Investment[]
 }
 
 model Income {
-  id Int @id @default(autoincrement())
-  title String
+  id     Int    @id @default(autoincrement())
+  title  String
   amount Float
-  user User @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
   userId Int
 }
 
 model Spending {
-  id Int @id @default(autoincrement())
-  title String
+  id     Int    @id @default(autoincrement())
+  title  String
   amount Float
-  user User @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
   userId Int
 }
 
-model Investment{
-  id Int @id @default(autoincrement())
-  type Type @default(OTHER)
-  interest Float? 
+model Investment {
+  id        Int    @id @default(autoincrement())
+  type      Type   @default(OTHER)
+  interest  Float?
   buy_price Float
-  amount Float?
-  user User @relation(fields: [userId], references: [id])
-  userId Int
+  amount    Float?
+  user      User   @relation(fields: [userId], references: [id])
+  userId    Int
 }
 
-enum Type{
+enum Type {
   STOCK
   OTHER
+}
+
+model JwtTokens {
+  id          Int      @id @default(autoincrement())
+  token       String
+  createdDate DateTime @default(now())
 }
