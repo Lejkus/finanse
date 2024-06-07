@@ -1,11 +1,12 @@
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 import refreshToken from "../functions/refreshToken.js";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 
-function Auth(req, res, next) {
+async function Auth(req, res, next) {
   console.log();
-  //console.log('authorization');
-  
+
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -13,31 +14,32 @@ function Auth(req, res, next) {
     return res.sendStatus(401);
   }
 
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
-    //console.log(err);
-    if (err) {
-      //check token
-      //****** check is he in db if yes error :)
-      if(token !== req.cookies.token || err.toString().substr(0, 12) !== "TokenExpired") return res.status(403).json({ error: "error" });
+  try {
+    //succesfully verified token
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+    req.userid = decoded.userid;
+    return next();
+  } catch (error) {
+    //token unverified (null or object)
+    const isAlreadyUsed = await prisma.jwtTokens.findFirst({
+      where: {
+        token: token,
+      },
+    });
 
-      refreshToken(req.cookies.refreshtoken,token,req, res)
-        //token refreshed succesfully
-        .then(() => {
-          next();
-        })
-        //if refresh token also expired 
-        .catch(error => {
-          return res.status(403).json({ error: err.message });
-        });
-    } else {
-      // seting userid in req
-      req.userid = decoded.userid; 
-      next();
+    //token unable to refresh
+    if (token !== req.cookies.token ||error.toString().substr(0, 12) !== "TokenExpired" || !isAlreadyUsed) {
+      return res.status(403).json({ error: "token refresh error" });
     }
 
-    //req.userid = decoded.userid;
-  });
+    //trying refresh token
+    try {
+      await refreshToken(req.cookies.refreshtoken, token, req, res);
+      return next();
+    } catch (refreshError) {
+      return res.status(403).json({ error: refreshError.message });
+    }
+  }
 }
 
-export default Auth
-
+export default Auth;
