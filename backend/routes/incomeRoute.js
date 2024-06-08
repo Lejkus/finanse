@@ -1,9 +1,69 @@
-import express from 'express'
+import express from "express";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 const router = express.Router();
-router.get("/",(req, res) => {
-  console.log(req.userid);
-  res.send("4 500 000 zł");
+
+router.get("/", async(req, res) => {
+  try {
+    const data = await prisma.income.findMany({
+      where: {
+        userId: req.userid
+      },
+    });
+    res.json({ succes: "succesfully get incomes ", data: data });
+  } catch (error) {
+    res.json({ error: error });
+  }
 });
 
-export default router
+router.post("/", async (req, res) => {
+  const {title, amount} = req.body
+
+  try {
+    await prisma.income.create({
+      data: {
+        title: title,
+        amount: amount,
+        userId: req.userid,
+      },
+    });
+    res.json({ succes: "succesfully add income " });
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+router.put("/", async (req, res) => {
+  const {title, amount} = req.body
+
+  try {
+    await prisma.income.update({
+      where: {
+        id: req.body.id,
+      },
+      data: {
+        title: title,
+        amount: amount,
+      },
+    })
+    res.json({ succes: "succesfully change income " });
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+router.delete("/", async(req, res) => {
+  try {
+    await prisma.income.delete({
+      where: {
+        id: req.body.id,
+      },
+    })
+    res.json({ succes: "succesfully deleted income " });
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+export default router;
